@@ -1,16 +1,20 @@
-name: Dpay nginx hello Deployment
+name: Deploy Nginx Hello to EC2
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - develop
+      - feat/updates-works
 
 env:
   IMAGE_NAME: nginx-hello
   CONTAINER_NAME: nginx-hello
+  DOCKERFILE: cicd/Dockerfile
 
 jobs:
   build-and-run:
-    runs-on: self-hosted 
+    runs-on: self-hosted
 
     steps:
       - name: Checkout Code
@@ -18,9 +22,9 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME -f $DOCKERFILE cicd/
 
-      - name: Stop & Remove Existing Container (if any)
+      - name: Stop & Remove Existing Container 
         run: |
           docker stop $CONTAINER_NAME || true
           docker rm $CONTAINER_NAME || true
