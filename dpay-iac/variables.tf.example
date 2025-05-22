@@ -16,9 +16,6 @@ variable "aws_bucket" {
   default = "playground-bucket"
 }
 
-variable "ami_id" {
-  default = "ami-05212caffa4a257da"
-}
 
 variable "vpc_cidr" {
   default = "10.0.0.0/16"
@@ -36,6 +33,11 @@ variable "bucket_name" {
     default = "terraform-state"
 }
 
+variable "ami_id" {
+    default = "ami-026c39f4021df9abe"
+  
+}
+
 variable "launch_template_name" {
   default = "dpay-lt"
 }
@@ -43,7 +45,7 @@ variable "launch_template_name" {
 
 variable "instance_type" {
   type = string
-  default = "t3.medium"
+  default = "t2.medium"
 }
 
 variable "key_name" {

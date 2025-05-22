@@ -7,7 +7,7 @@ module "vpc" {
   vpc_cidr             = var.vpc_cidr
   public_subnet_cidr   = "10.0.1.0/24"
   private_subnet_cidr  = "10.0.2.0/24"
-  az                   = "us-east-1a"
+  az                   = "ap-southeast-3a"
 }
 
 
@@ -28,8 +28,8 @@ module "autoscaling" {
   source            = "./modules/ec2-autoscaling"
   private_subnet_id  = module.vpc.private_subnet_id
   launch_template_name = "asg-template"
-  ami_id            = "ami-0123456789abcdef0"
-  instance_type     = "t2.medium"
+  ami_id            =  var.ami_id
+  instance_type     =  var.instance_type
   key_name          = var.key_name
   admin_users       = var.admin_users
   public_ssh_key    = var.public_ssh_key

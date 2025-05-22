@@ -1,0 +1,3 @@
+admin_users = "<your user>"
+key_name = "<defaultkeyname>"
+public_ssh_key = "<ssh .pub content>"
