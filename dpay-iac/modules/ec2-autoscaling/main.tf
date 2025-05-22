@@ -13,25 +13,25 @@ resource "aws_iam_role" "ec2_role" {
   })
 }
 
-# Attach CloudWatch Agent Policy to IAM Role
+
 resource "aws_iam_role_policy_attachment" "cw_attach" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
-# Attach ReadOnly EC2 Policy to IAM Role
+
 resource "aws_iam_role_policy_attachment" "basic_ec2_attach" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
 }
 
-# IAM Instance Profile for EC2
+
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "ec2-autoscaling-profile"
   role = aws_iam_role.ec2_role.name
 }
 
-# AMI Data Source — filter by ID passed in variable (ensure var.ami_id is correct and valid in your region)
+
 data "aws_ami" "validated" {
   most_recent = true
   owners      = ["amazon"]
@@ -42,7 +42,7 @@ data "aws_ami" "validated" {
   }
 }
 
-# Launch Template for EC2 instances in Auto Scaling Group
+
 resource "aws_launch_template" "lt" {
   name_prefix   = var.launch_template_name
   image_id      = data.aws_ami.validated.id
@@ -71,7 +71,7 @@ resource "aws_launch_template" "lt" {
   }
 }
 
-# Auto Scaling Group using the launch template
+
 resource "aws_autoscaling_group" "asg" {
   name                      = "asg-app"
   min_size                  = var.asg_min_size
@@ -94,7 +94,7 @@ resource "aws_autoscaling_group" "asg" {
   }
 }
 
-# Auto Scaling Policy — scales out based on average CPU utilization
+
 resource "aws_autoscaling_policy" "cpu_scale_out" {
   name                   = "scale-out-on-high-cpu"
   policy_type            = "TargetTrackingScaling"
