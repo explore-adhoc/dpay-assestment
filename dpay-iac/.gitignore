@@ -17,7 +17,7 @@ terraform.rc
 *.tfvars.json
 
 # Plan output files
-*.plan
+#*.plan
 
 # Ignore override files (user-specific configuration)
 override.tf
