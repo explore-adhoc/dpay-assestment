@@ -1,103 +1,69 @@
+# Results screenshoot:
 
+# PROBLEM 1:
+full terraform plan [log](./dpay-iac/outs.log) : 
 
-# Problem #1
-Write Terraform HCL config to generate AWS infra in the following form:
+## Write Terraform HCL config to generate AWS infra in the following form:
+
 A. 1 VPC
+
 B. 1 public subnet
+### Results-Problem 1 point A,B:
+![vpc screenshoot](./Results/VPC.png)
+
+---
 C. 1 private subnet connected to 1 NAT Gateway
+### Results-Problem 1 point C:
+![vpc screenshoot](./Results/Screenshot%202025-05-22%20120843.png)
+
+---
+
 D. 1 autoscaling group with config:
+
     a. minimum 2 EC2 t2.medium instances and max 5 instances,
     b. where scaling policy is CPU >= 45%.
     c. instances must be placed on the 1 private subnet created in point C above.
+
+### Results-Problem 1 point D:
+a. minimum 2 EC2 t2.medium instances and max 5 instances,
+
+![ec2](./Results/Screenshot%202025-05-22%20125725.png)
+
+b. where scaling policy is CPU >= 45%.
+![ec2](./Results/Screenshot%202025-05-22%20125720.png)
+
+c. instances must be placed on the 1 private subnet created in point C above.
+![ec2](./Results/Screenshot%202025-05-22%20130224.png)
+---
+
+
 E. Automatically creates CloudWatch monitoring for instance and resource created:
+
     a. CPU monitoring
     b. memory usage
     c. status check failure
     d. network usage
-    F. Terraform backend should be stored on S3 bucket.
 
-## 📦 To Solve problem #1:
-
-- **VPC Module**
-  - 1 VPC with public and private subnets
-  - Internet Gateway and NAT Gateway
-  - Route tables
-
-- **NAT Gateway Module**
-  - NAT Gateway in the public subnet
-  - Private subnet internet access via NAT
-
-- **EC2 Auto Scaling Module**
-  - Launch Template with Amazon CloudWatch Agent
-  - Auto Scaling Group in private subnet (min: 2, max: 5)
-  - CPU ≥ 45% triggers scale-out policy
-
-- **CloudWatch Monitoring Module**
-  - Alarms for:
-    - CPU usage
-    - Memory usage
-    - EC2 status check failures
-    - Network In/Out
-
-- **Remote State via S3**
-  - S3 backend with native state locking to s3 bucket
-
-## 🛠 How to Use
-
-### 1. Prepare S3 to save terraform state
-
-change dir ```cd dpay-iac/```
-
-then run this command to create s3 bucket to store terraform state
-```hcl
-terraform init -backend=false
-```
-
-Then Run this command
-```hcl
-terraform apply -target=s3_bucket.tf_state -auto-approve
-```
-
-### 1.1 To make it easier for you, I have prepared 2 executable files.
-
-with this options all settings will automatically creates
-
-MAC | Linux | WSL
-```bash
-chmod +x ./infra-setup.sh && ./infra-setup.sh
-```
-
-WINDOWS
-open with powershell
-```cmd
-infra-setup.cmd
-```
-
-### 3. Initialize Terraform
-
-```bash
-terraform init
-```
-
-### 4. Apply Infrastructure
-
-```bash
-terraform apply
-```
-
-## 🔐 Notes
-
-- Ensure you have your AWS credentials configured via `~/.aws/credentials` or environment variables.
-- Replace AMI ID and region to match your use case.
-- Review IAM permissions before applying.
-
-## 📁 Modules
-
-- `modules/vpc`
-- `modules/nat_gateway`
-- `modules/ec2_autoscaling`
-- `modules/cloudwatch`
-
+### Results-Problem 1 point E:
+![monitoring](./Results/Screenshot%202025-05-22%20130847.png)
 ---
 
-Maintained by: **Indra Buchori Ruiswara**
+
+# PROBLEM 2
+Write 1 Dockerfile config + 1 CI/CD Pipeline YAML file.
+
+    A. The YAML file will deploy from a docker image created by a Dockerfile.
+    B. The Dockerfile needs to simply install Nginx and put the file from the repo named "hello.txt" into the "/var/www/" folder. Let us assume that folder is the main folder that Nginx will read as a web server.
+    C. The Docker image then needs to be installed on an EC2 server on AWS and running.
+
+### Results - Problem 2:
+- [the Dockerfile](cicd\Dockerfile)
+- [the pipeline YAML](.github\workflows\deploy.yml)
+
+![results](./Results/Screenshot%202025-05-22%20134759.png)
+---
+
+Test access from internet: 
+- http://108.136.60.153/
+
+![result](./Results/Screenshot%202025-05-22%20134748.png)

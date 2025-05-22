@@ -54,7 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "network_in" {
   namespace           = "AWS/EC2"
   period              = 60
   statistic           = "Average"
-  threshold           = 10000000  # 10 MB
+  threshold           = 10000000 # 10 MB
   alarm_description   = "High network in traffic"
   dimensions = {
     AutoScalingGroupName = var.asg_name
@@ -70,10 +70,94 @@ resource "aws_cloudwatch_metric_alarm" "network_out" {
   namespace           = "AWS/EC2"
   period              = 60
   statistic           = "Average"
-  threshold           = 10000000  # 10 MB
+  threshold           = 10000000 # 10 MB
   alarm_description   = "High network out traffic"
   dimensions = {
     AutoScalingGroupName = var.asg_name
   }
   alarm_actions = []
 }
+
+resource "aws_cloudwatch_dashboard" "asg_dashboard" {
+  dashboard_name = "${var.name_prefix}-dashboard"
+
+  dashboard_body = jsonencode({
+    widgets = [
+      {
+        type = "metric"
+        x = 0
+        y = 0
+        width = 12
+        height = 6
+        properties = {
+          metrics = [
+            [ "AWS/EC2", "CPUUtilization", "AutoScalingGroupName", var.asg_name, { stat: "Average" } ]
+          ]
+          period = 60
+          stat = "Average"
+          region = "${data.aws_region.current.name}"
+          title = "CPU Utilization"
+          view = "timeSeries"
+          stacked = false
+        }
+      },
+      {
+        type = "metric"
+        x = 12
+        y = 0
+        width = 12
+        height = 6
+        properties = {
+          metrics = [
+            [ "CWAgent", "mem_used_percent", "AutoScalingGroupName", var.asg_name, { stat: "Average" } ]
+          ]
+          period = 60
+          stat = "Average"
+          region = "${data.aws_region.current.name}"
+          title = "Memory Usage (%)"
+          view = "timeSeries"
+          stacked = false
+        }
+      },
+      {
+        type = "metric"
+        x = 0
+        y = 6
+        width = 12
+        height = 6
+        properties = {
+          metrics = [
+            [ "AWS/EC2", "StatusCheckFailed", "AutoScalingGroupName", var.asg_name, { stat: "Maximum" } ]
+          ]
+          period = 60
+          stat = "Maximum"
+          region = "${data.aws_region.current.name}"
+          title = "Status Check Failures"
+          view = "timeSeries"
+          stacked = false
+        }
+      },
+      {
+        type = "metric"
+        x = 12
+        y = 6
+        width = 12
+        height = 6
+        properties = {
+          metrics = [
+            [ "AWS/EC2", "NetworkIn", "AutoScalingGroupName", var.asg_name, { stat: "Average" } ],
+            [ ".", "NetworkOut", ".", ".", { stat: "Average" } ]
+          ]
+          period = 60
+          stat = "Average"
+          region = "${data.aws_region.current.name}"
+          title = "Network Traffic (In / Out)"
+          view = "timeSeries"
+          stacked = false
+        }
+      }
+    ]
+  })
+}
+
+data "aws_region" "current" {}

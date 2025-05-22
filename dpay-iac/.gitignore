@@ -34,3 +34,5 @@ override.tf.json
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
+
+infra-plan.txt
