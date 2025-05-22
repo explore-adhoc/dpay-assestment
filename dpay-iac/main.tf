@@ -15,7 +15,7 @@ module "security_group" {
   source      = "./modules/security"
   vpc_id      = module.vpc.vpc_id
   name_prefix = "asg"
-  my_ip_cidr  = "180.244.46.188/32"
+  my_ip_cidr  = "<Change to your IP>"
 }
 
 module "nat_gateway" {

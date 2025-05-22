@@ -1,5 +1,6 @@
-# PROBLEM 1 Results screenshoot:
+# Results screenshoot:
 
+# PROBLEM 1:
 full terraform plan [log](./dpay-iac/outs.log) : 
 
 ## Write Terraform HCL config to generate AWS infra in the following form:
@@ -46,3 +47,23 @@ E. Automatically creates CloudWatch monitoring for instance and resource created
 ### Results-Problem 1 point E:
 ![monitoring](./Results/Screenshot%202025-05-22%20130847.png)
 ---
+
+
+# PROBLEM 2
+Write 1 Dockerfile config + 1 CI/CD Pipeline YAML file.
+
+    A. The YAML file will deploy from a docker image created by a Dockerfile.
+    B. The Dockerfile needs to simply install Nginx and put the file from the repo named "hello.txt" into the "/var/www/" folder. Let us assume that folder is the main folder that Nginx will read as a web server.
+    C. The Docker image then needs to be installed on an EC2 server on AWS and running.
+
+### Results - Problem 2:
+- [the Dockerfile](cicd\Dockerfile)
+- [the pipeline YAML](.github\workflows\deploy.yml)
+
+![results](./Results/Screenshot%202025-05-22%20134759.png)
+---
+
+Test access from internet: 
+- http://108.136.60.153/
+
+![result](./Results/Screenshot%202025-05-22%20134748.png)
