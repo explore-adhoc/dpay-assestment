@@ -1,0 +1,47 @@
+name: Deploy Nginx with Hello File
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  IMAGE_NAME: your-dockerhub-username/nginx-hello
+  EC2_HOST: ec2-user@your-ec2-public-ip
+  KEY_PATH: /home/runner/.ssh/aws_key.pem
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t $IMAGE_NAME .
+        docker push $IMAGE_NAME
+
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.AWS_EC2_PRIVATE_KEY }}" > $KEY_PATH
+        chmod 600 $KEY_PATH
+        ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to EC2
+      run: |
+        ssh -i $KEY_PATH $EC2_HOST << 'EOF'
+          docker pull ${{ env.IMAGE_NAME }}
+          docker stop nginx-hello || true && docker rm nginx-hello || true
+          docker run -d --name nginx-hello -p 80:80 ${{ env.IMAGE_NAME }}
+        EOF
